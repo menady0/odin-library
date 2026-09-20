@@ -1,0 +1,38 @@
+:root {
+  --primary-color: teal;
+}
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  font-family: "Courier New", Courier, monospace;
+  background-color: rgb(28, 28, 28);
+  color: rgb(228, 228, 228);
+  margin: 32px;
+}
+.library-text {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.library-text button {
+  padding: 12px 24px;
+  border-radius: 12px;
+  color: inherit;
+  border: 1px solid var(--primary-color);
+  background-color: transparent;
+  transition: all 0.3s;
+}
+.library-text button:hover {
+  background-color: var(--primary-color);
+  box-shadow: 0 4px 12px rgb(228 228 228 / 20%);
+}
+.library-text button span {
+  display: inline-block;
+  transition: all 0.3s ease;
+}
+.library-text button:hover span {
+  transform: rotateZ(180deg);
+}
