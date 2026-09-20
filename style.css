@@ -10,7 +10,10 @@ body {
   font-family: "Courier New", Courier, monospace;
   background-color: rgb(18, 18, 18);
   color: rgb(228, 228, 228);
+}
+.container {
   margin: 32px;
+
 }
 .library-text {
   display: flex;
@@ -186,4 +189,24 @@ body {
 
 .book button:active {
   transform: translateY(0);
+}
+footer {
+  margin-top: 48px;
+  padding: 24px 16px;
+
+  text-align: center;
+  color: #777;
+  font-size: 13px;
+
+  border-top: 1px solid rgb(255 255 255 / 6%);
+}
+footer a {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.2s ease;
+}
+
+footer a:hover {
+  color: #fff;
 }
