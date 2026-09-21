@@ -1,4 +1,4 @@
-let library = [];
+const library = [];
 
 class Book {
   constructor(title, author, pages, isRead, imgUrl) {
@@ -9,62 +9,100 @@ class Book {
     this.isRead = isRead;
     this.imgUrl = imgUrl;
   }
+
+  toggleRead() {
+    this.isRead = !this.isRead;
+  }
 }
 
-function addBookToLibrary(title, author, pages, isRead, imgUrl) {
-  const myBook = new Book(title, author, pages, isRead, imgUrl);
-  library.push(myBook);
+// --- Sample data (kept for demo) ---
+function addSampleBooks() {
+  const samples = [
+    [
+      "Atomic Habits",
+      "James Clear",
+      319,
+      true,
+      "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1655988385i/40121378.jpg",
+    ],
+    [
+      "Rich Dad Poor Dad",
+      "Robert T. Kiyosaki",
+      195,
+      false,
+      "https://m.media-amazon.com/images/I/81bsw6fnUiL._AC_UF1000,1000_QL80_.jpg",
+    ],
+    [
+      "The Psychology of Money",
+      "Morgan Housel",
+      242,
+      true,
+      "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1581527774i/41881472.jpg",
+    ],
+  ];
+
+  samples.forEach(([title, author, pages, isRead, imgUrl]) =>
+    library.push(new Book(title, author, pages, isRead, imgUrl)),
+  );
 }
-addBookToLibrary(
-  "Atomic Habits",
-  "James Clear",
-  319,
-  true,
-  "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1655988385i/40121378.jpg",
-);
-addBookToLibrary(
-  "Rich Dad Poor Dad",
-  "Robert T. Kiyosaki",
-  195,
-  false,
-  "https://m.media-amazon.com/images/I/81bsw6fnUiL._AC_UF1000,1000_QL80_.jpg",
-);
-addBookToLibrary(
-  "The Psychology of Money",
-  "Morgan Housel",
-  242,
-  true,
-  "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1581527774i/41881472.jpg",
-);
-const books = document.querySelector(".books");
-function createBook(book) {
+
+// --- DOM & selectors ---
+const booksContainer = document.querySelector(".books");
+const dialog = document.querySelector("#bookDialog");
+const addBookBtn = document.querySelector("#addBook");
+const cancelBookBtn = document.querySelector("#cancelBook");
+const form = document.querySelector(".book-form");
+
+// --- UI helpers ---
+function createBookElement(book) {
   const status = book.isRead ? "read" : "unread";
+
   const card = document.createElement("div");
-  card.classList.add("book");
-  card.setAttribute("data-id", book.id);
+  card.className = "book";
+  card.dataset.id = book.id;
 
-  card.innerHTML = `
-    <img src="${book.imgUrl}" alt="${book.title}" />
+  const img = document.createElement("img");
+  img.src = book.imgUrl;
+  img.alt = book.title;
 
-    <div class="book-context">
-      <div class="title">
-        <h2>${book.title}</h2>
-        <span class="mdi mdi-delete btnDelete"></span>
-      </div>
+  const ctx = document.createElement("div");
+  ctx.className = "book-context";
 
-      <p class="author">${book.author}</p>
-      <p class="pages">${book.pages}</p>
+  const titleRow = document.createElement("div");
+  titleRow.className = "title";
 
-      <span class="tag ${status}">${status}</span>
+  const h2 = document.createElement("h2");
+  h2.textContent = book.title;
 
-      <button class="btnToggle">Toggle</button>
-    </div>
-  `;
+  const del = document.createElement("span");
+  del.className = "mdi mdi-delete btnDelete";
 
-  books.appendChild(card);
+  titleRow.append(h2, del);
+
+  const authorP = document.createElement("p");
+  authorP.className = "author";
+  authorP.textContent = book.author;
+
+  const pagesP = document.createElement("p");
+  pagesP.className = "pages";
+  pagesP.textContent = book.pages;
+
+  const tag = document.createElement("span");
+  tag.className = `tag ${status}`;
+  tag.textContent = status;
+
+  const toggleBtn = document.createElement("button");
+  toggleBtn.className = "btnToggle";
+  toggleBtn.textContent = "Toggle";
+
+  ctx.append(titleRow, authorP, pagesP, tag, toggleBtn);
+  card.append(img, ctx);
+
+  return card;
 }
+
 function renderEmptyState() {
-  books.innerHTML = `
+  booksContainer.innerHTML = `
     <div class="empty-state">
       <span class="mdi mdi-book-open-page-variant-outline empty-icon"></span>
       <h2>Your library is empty</h2>
@@ -72,72 +110,80 @@ function renderEmptyState() {
     </div>
   `;
 }
-function displayBooks() {
-  books.innerHTML = "";
-  if (!library || library.length === 0) {
+
+function renderBooks() {
+  booksContainer.innerHTML = "";
+  if (!library.length) {
     renderEmptyState();
     return;
   }
-  library.forEach((element) => createBook(element));
+
+  const fragment = document.createDocumentFragment();
+  library.forEach((book) => fragment.appendChild(createBookElement(book)));
+  booksContainer.appendChild(fragment);
 }
-displayBooks();
 
-const dialog = document.querySelector("#bookDialog");
-const addBookBtn = document.querySelector("#addBook");
-const cancelBookBtn = document.querySelector("#cancelBook");
-const form = document.querySelector(".book-form");
-
-addBookBtn.addEventListener("click", () => {
+// --- Event handlers ---
+function openDialog() {
   dialog.showModal();
-});
+}
 
-form.addEventListener("submit", (event) => {
+function closeDialog() {
+  dialog.close();
+}
+
+function handleFormSubmit(event) {
   event.preventDefault();
 
-  const formData = new FormData(form);
-
-  const title = formData.get("title");
-  const author = formData.get("author");
-  const pages = Number(formData.get("pages"));
-  const isRead = formData.get("isRead") === "true";
-  const imgUrl = formData.get("imgUrl");
+  const data = new FormData(form);
+  const title = data.get("title");
+  const author = data.get("author");
+  const pages = Number(data.get("pages"));
+  const isRead = data.get("isRead") === "true";
+  const imgUrl = data.get("imgUrl");
 
   const book = new Book(title, author, pages, isRead, imgUrl);
-
   library.push(book);
-  displayBooks();
-  form.reset();
-  dialog.close();
-});
 
-cancelBookBtn.addEventListener("click", () => {
-  dialog.close();
-});
-books.addEventListener("click", (e) => {
+  renderBooks();
+  form.reset();
+  closeDialog();
+}
+
+function handleBooksClick(e) {
   const target = e.target;
   const card = target.closest(".book");
   if (!card) return;
 
   const bookId = card.dataset.id;
-  // Handle Delete Button
-  const index = library.findIndex((item) => item.id === bookId);
-  if (target.classList.contains("btnDelete")) {
-    card.remove();
-    if (index !== -1) {
-      library.splice(index, 1);
-    }
-    if (library.length === 0) {
-      displayBooks();
-    }
-  }
-  // Handle Toggle Button
-  if (target.classList.contains("btnToggle")) {
-    const tag = card.querySelector(".tag");
-    const isRead = tag.classList.contains("read");
-    tag.classList.toggle("read", !isRead);
-    tag.classList.toggle("unread", isRead);
-    tag.textContent = !isRead ? "read" : "unread";
+  const index = library.findIndex((b) => b.id === bookId);
 
-    library[index].isRead = !isRead;
+  if (target.classList.contains("btnDelete")) {
+    if (index !== -1) library.splice(index, 1);
+    renderBooks();
+    return;
   }
-});
+
+  if (target.classList.contains("btnToggle")) {
+    const book = library[index];
+    if (!book) return;
+    book.toggleRead();
+    const tag = card.querySelector(".tag");
+    const newStatus = book.isRead ? "read" : "unread";
+    tag.className = `tag ${newStatus}`;
+    tag.textContent = newStatus;
+  }
+}
+
+// --- Initialization ---
+function init() {
+  addSampleBooks();
+  renderBooks();
+
+  addBookBtn.addEventListener("click", openDialog);
+  cancelBookBtn.addEventListener("click", closeDialog);
+  form.addEventListener("submit", handleFormSubmit);
+  booksContainer.addEventListener("click", handleBooksClick);
+}
+
+init();
