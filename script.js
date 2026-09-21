@@ -1,25 +1,41 @@
 let library = [];
 
-function Book(title, author, pages, isRead, imgUrl) {
-  this.id = crypto.randomUUID();
-  this.title = title;
-  this.author = author;
-  this.pages = pages;
-  this.isRead = isRead;
-  this.imgUrl = imgUrl;
+class Book {
+  constructor(title, author, pages, isRead, imgUrl) {
+    this.id = crypto.randomUUID();
+    this.title = title;
+    this.author = author;
+    this.pages = pages;
+    this.isRead = isRead;
+    this.imgUrl = imgUrl;
+  }
 }
 
 function addBookToLibrary(title, author, pages, isRead, imgUrl) {
   const myBook = new Book(title, author, pages, isRead, imgUrl);
   library.push(myBook);
 }
-// addBookToLibrary("Atomic Habits", "Mina", 22, false, "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQPS8ehjqvJkVzmFsoX2Eqvix7LAollSLyiuSSdoxQBo2VW-0dPZPOeGJ4&s=10");
-// addBookToLibrary("My Library", "Mina", 22, true, "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQPS8ehjqvJkVzmFsoX2Eqvix7LAollSLyiuSSdoxQBo2VW-0dPZPOeGJ4&s=10");
-// addBookToLibrary("My Library", "Mina", 22, false, "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQPS8ehjqvJkVzmFsoX2Eqvix7LAollSLyiuSSdoxQBo2VW-0dPZPOeGJ4&s=10");
-// addBookToLibrary("My Library", "Mina", 22, true, "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQPS8ehjqvJkVzmFsoX2Eqvix7LAollSLyiuSSdoxQBo2VW-0dPZPOeGJ4&s=10");
-// addBookToLibrary("My Library", "Mina", 22, false, "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQPS8ehjqvJkVzmFsoX2Eqvix7LAollSLyiuSSdoxQBo2VW-0dPZPOeGJ4&s=10");
-// addBookToLibrary("My Library", "Mina", 22, false, "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQPS8ehjqvJkVzmFsoX2Eqvix7LAollSLyiuSSdoxQBo2VW-0dPZPOeGJ4&s=10");
-// addBookToLibrary("My Library", "Mina", 22, true, "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQPS8ehjqvJkVzmFsoX2Eqvix7LAollSLyiuSSdoxQBo2VW-0dPZPOeGJ4&s=10");
+addBookToLibrary(
+  "Atomic Habits",
+  "James Clear",
+  319,
+  true,
+  "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1655988385i/40121378.jpg",
+);
+addBookToLibrary(
+  "Rich Dad Poor Dad",
+  "Robert T. Kiyosaki",
+  195,
+  false,
+  "https://m.media-amazon.com/images/I/81bsw6fnUiL._AC_UF1000,1000_QL80_.jpg",
+);
+addBookToLibrary(
+  "The Psychology of Money",
+  "Morgan Housel",
+  242,
+  true,
+  "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1581527774i/41881472.jpg",
+);
 const books = document.querySelector(".books");
 function createBook(book) {
   const status = book.isRead ? "read" : "unread";
@@ -47,16 +63,10 @@ function createBook(book) {
   books.appendChild(card);
 }
 function displayBooks() {
-  for (const book in library) {
-    if (!Object.hasOwn(library, book)) continue;
-    
-    const element = library[book];
-    createBook(element);
-  }
+  books.innerHTML = "";
+  library.forEach((element) => createBook(element));
 }
 displayBooks();
-
-
 
 const dialog = document.querySelector("#bookDialog");
 const addBookBtn = document.querySelector("#addBook");
@@ -78,17 +88,11 @@ form.addEventListener("submit", (event) => {
   const isRead = formData.get("isRead") === "true";
   const imgUrl = formData.get("imgUrl");
 
-  const book = new Book(
-    title,
-    author,
-    pages,
-    isRead,
-    imgUrl
-  );
+  const book = new Book(title, author, pages, isRead, imgUrl);
 
-  library.push(book)
+  library.push(book);
   displayBooks();
-
+  form.reset();
   dialog.close();
 });
 
