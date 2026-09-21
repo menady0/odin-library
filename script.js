@@ -41,6 +41,7 @@ function createBook(book) {
   const status = book.isRead ? "read" : "unread";
   const card = document.createElement("div");
   card.classList.add("book");
+  card.setAttribute("data-id", book.id);
 
   card.innerHTML = `
     <img src="${book.imgUrl}" alt="${book.title}" />
@@ -48,7 +49,7 @@ function createBook(book) {
     <div class="book-context">
       <div class="title">
         <h2>${book.title}</h2>
-        <span class="mdi mdi-delete"></span>
+        <span class="mdi mdi-delete btnDelete"></span>
       </div>
 
       <p class="author">${book.author}</p>
@@ -56,7 +57,7 @@ function createBook(book) {
 
       <span class="tag ${status}">${status}</span>
 
-      <button>Toggle</button>
+      <button class="btnToggle">Toggle</button>
     </div>
   `;
 
@@ -99,3 +100,29 @@ form.addEventListener("submit", (event) => {
 cancelBookBtn.addEventListener("click", () => {
   dialog.close();
 });
+books.addEventListener("click", (e) => {
+  const target = e.target;
+  const card = target.closest(".book");
+  if (!card) return;
+
+  const bookId = card.dataset.id;
+  // Handle Delete Button
+  const index = library.findIndex((item) => item.id === bookId);
+  if (target.classList.contains("btnDelete")) {
+    card.remove();
+    if (index !== -1) {
+      library.splice(index, 1);
+    }
+  }
+  // Handle Toggle Button
+  if (target.classList.contains("btnToggle")) {
+    const tag = card.querySelector(".tag");
+    const isRead = tag.classList.contains("read");
+    tag.classList.toggle("read", !isRead);
+    tag.classList.toggle("unread", isRead);
+    tag.textContent = !isRead ? "read" : "unread";
+
+    library[index].isRead = !isRead;
+  }
+});
+const btnDelete = document.querySelectorAll(".btnDelete");
