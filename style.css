@@ -10,10 +10,13 @@ body {
   font-family: "Courier New", Courier, monospace;
   background-color: rgb(18, 18, 18);
   color: rgb(228, 228, 228);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 .container {
   margin: 32px;
-
+  flex: 1;
 }
 .library-text {
   display: flex;
@@ -22,7 +25,7 @@ body {
   gap: 16px;
 }
 
-.library-text button {
+.library-text #addBook {
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -38,31 +41,31 @@ body {
     transform 0.2s ease;
 }
 
-.library-text button:hover {
+.library-text #addBook:hover {
   background-color: var(--primary-color);
   box-shadow: 0 4px 12px rgb(228 228 228 / 20%);
   transform: translateY(-2px);
 }
 
-.library-text button span {
+.library-text #addBook span {
   display: inline-block;
   transition: transform 0.3s ease;
 }
 
-.library-text button:hover span {
+.library-text #addBook:hover span {
   transform: rotate(180deg);
 }
 
-.library-text button:active {
+.library-text #addBook:active {
   transform: translateY(0);
 }
-
 
 .books {
   margin-block: 16px;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(220px, 280px));
   gap: 20px;
+  justify-content: center;
 }
 .book {
   background-color: rgb(18, 18, 18);
@@ -150,7 +153,6 @@ body {
   padding: 5px 10px;
   border-radius: 999px;
 
-  
   font-size: 12px;
   font-weight: 600;
   line-height: 1;
@@ -216,4 +218,82 @@ footer a {
 
 footer a:hover {
   color: #fff;
+}
+
+/* Dialog */
+dialog {
+  width: min(90%, 500px);
+  padding: 0;
+  margin: auto;
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+}
+
+dialog::backdrop {
+  background: rgba(0, 0, 0, 0.55);
+}
+
+.book-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding: 2rem;
+}
+
+.book-form h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.5rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.form-group label {
+  font-weight: 600;
+}
+
+.form-group input,
+.form-group select {
+  padding: 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font: inherit;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: 2px solid #4f46e5;
+  border-color: transparent;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.form-actions button {
+  padding: 0.7rem 1.2rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font: inherit;
+}
+
+.form-actions button[type="button"] {
+  background: #e5e7eb;
+}
+
+.form-actions button[type="submit"] {
+  color: white;
+  background: #4f46e5;
+}
+
+.form-actions button:hover {
+  opacity: 0.9;
 }
