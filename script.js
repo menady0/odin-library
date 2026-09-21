@@ -63,8 +63,21 @@ function createBook(book) {
 
   books.appendChild(card);
 }
+function renderEmptyState() {
+  books.innerHTML = `
+    <div class="empty-state">
+      <span class="mdi mdi-book-open-page-variant-outline empty-icon"></span>
+      <h2>Your library is empty</h2>
+      <p>Click the button below to add your first book to the collection.</p>
+    </div>
+  `;
+}
 function displayBooks() {
   books.innerHTML = "";
+  if (!library || library.length === 0) {
+    renderEmptyState();
+    return;
+  }
   library.forEach((element) => createBook(element));
 }
 displayBooks();
@@ -113,6 +126,9 @@ books.addEventListener("click", (e) => {
     if (index !== -1) {
       library.splice(index, 1);
     }
+    if (library.length === 0) {
+      displayBooks();
+    }
   }
   // Handle Toggle Button
   if (target.classList.contains("btnToggle")) {
@@ -125,4 +141,3 @@ books.addEventListener("click", (e) => {
     library[index].isRead = !isRead;
   }
 });
-const btnDelete = document.querySelectorAll(".btnDelete");
